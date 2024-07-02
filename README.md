@@ -1,38 +1,21 @@
-Content Engine
+Content Engine Project 
 Overview
-The Content Engine is a chatbot interface that retrieves relevant documents and generates insights based on user queries. It uses Pinecone vector store to store document embeddings, Llama Index to query the embeddings, and a local language model to generate insights.
+This repo holds the code for the Content Engine project. We built a chatbot that grabs and compares info from multiple PDFs. Our bot uses NLP and info retrieval tricks to give good answers to what users ask. Architecture Our system has these parts:
+Document Parser: This bit takes PDFs and pulls out the words.
+Vector Generator: This part uses DistilBERT (a pre-trained language model) to turn text into number vectors. 
+Vector Store: This bit keeps the document vectors in a Faiss index. Faiss makes finding similar stuff quick. 
+Query Engine: This part uses the Faiss index to find docs that match what the user wants. 
 
-Getting Started
-Prerequisites
-Python 3.8 or later
-Streamlit library for chatbot interface
-Langchain library for local language model
-Llama Index library for querying embeddings
-Pinecone library for vector store
-Installation
-Clone the repository: git clone https://github.com/your-username/content-engine.git
-Install the required libraries: pip install -r requirements.txt
-Run the chatbot interface: streamlit run app.py
-Usage
-Open the chatbot interface in your web browser: http://localhost:8501
-Enter your query in the text input field
-Click the "Enter" button to retrieve relevant documents and generate insights
-Configuration
-Pinecone Vector Store
-Index name: content_engine
-Dimension: 768 (for distilbert-base-uncased model)
-Llama Index
-Query engine: QueryEngine(index=pinecone)
-Local Language Model
-Model name: distilbert-base-uncased
-License
-This project is licensed under the MIT License. See LICENSE for details.
+working:
+The user inputs a query into the chatbot interface.
+The query is tokenized and fed into the DistilBERT model, which generates a vector representation of the query.
+The vector representation of the query is used to search the Faiss index, which returns a list of documents that are similar to the query.
+The chatbot interface displays the relevant documents to the user.
+Components
 
-Acknowledgments
-This project uses the following libraries:
-
-Langchain: https://github.com/langchain/langchain
-Llama Index: https://github.com/llamaindex/llamaindex
-Pinecone: https://github.com/pinecone-io/pinecone
-Streamlit: https://github.com/streamlit/streamlit
-Please note that this is just a sample README file, and you should modify it to fit your specific project needs.
+The repository contains the following components:
+content_engine.py: A Python script containing the code for parsing documents, generating vectors, storing in vector store, configuring query engine, integrating LLM, and developing chatbot interface.
+langchain_config.json: A configuration file for LangChain, which is used to configure the Faiss index.
+faiss_index.py: A Python script for creating and managing the Faiss index.
+distilbert_model.py: A Python script for loading and using the DistilBERT model.
+streamlit_app.py: A Python script for developing the chatbot interface using Streamlit.
