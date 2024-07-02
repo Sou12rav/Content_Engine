@@ -1,67 +1,50 @@
 import PyPDF2
-import os
+import torch
+from transformers import DistilBertTokenizer, DistilBertModel
+import faiss
+import langchain
 import streamlit as st
-from langchain.llm import LLM
-from llama_index import LlamaIndex
-from pinecone import Pinecone
 
-pdf_paths = ["Alphabet_10K.pdf", "Tesla, Inc. Form 10-K.pdf", "Uber Technologies, Inc. Form 10-K.pdf"]
+pdfs = ['data/alphabet_inc_form_10k.pdf', 'data/tesla_inc_form_10k.pdf', 'data/uber_technologies_inc_form_10k.pdf']
+documents = []
+for pdf in pdfs:
+    with open(pdf, 'rb') as f:
+        pdf_reader = PyPDF2.PdfFileReader(f)
+        num_pages = pdf_reader.numPages
+        text = ''
+        for page in range(num_pages):
+            page_obj = pdf_reader.getPage(page)
+            text += page_obj.extractText()
+        documents.append(text)
 
-def extract_text_from_pdfs(pdf_paths):
-    texts = []
-    for path in pdf_paths:
-        doc = PyPDF2.open(path)
-        text = ""
-        for page in doc:
-            text += page.get_text()
-        texts.append(text)
-    return texts
+tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
+model = DistilBertModel.from_pretrained('distilbert-base-uncased')
 
-documents_text = extract_text_from_pdfs(pdf_paths)
+vectors = []
+for document in documents:
+    inputs = tokenizer(document, return_tensors='pt', max_length=512, truncation=True)
+    outputs = model(**inputs)
+    vector = outputs.last_hidden_state[:, 0, :]
+    vectors.append(vector.detach().numpy())
 
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+index = faiss.IndexFlatL2(768)
+index.add(vectors)
 
-model_name = "distilbert-base-uncased"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
+query_engine = langchain.QueryEngine(index)
 
-def create_embeddings(documents_text):
-    embeddings = []
-    for text in documents_text:
-        inputs = tokenizer(text, return_tensors="pt", max_length=512, truncation=True)
-        outputs = model(**inputs)
-        embeddings.append(outputs.last_hidden_state[:, 0, :].detach().numpy())
-    return embeddings
 
-document_embeddings = create_embeddings(documents_text)
+tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
+model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased')
 
-pinecone = Pinecone(index_name="content_engine")
+st.title("Content Engine Chatbot")
+st.write("Ask me a question about the documents!")
 
-def store_embeddings_in_pinecone(document_embeddings):
-    pinecone.create_index()
-    for i, embedding in enumerate(document_embeddings):
-        pinecone.upsert(i, embedding)
-
-store_embeddings_in_pinecone(document_embeddings)
-
-from llama_index import QueryEngine
-
-query_engine = QueryEngine(index=pinecone)
-
-llm = LLM("distilbert-base-uncased")
-
-st.title("Content Engine")
-st.write("Welcome to the Content Engine!")
-
-query = st.text_input("Enter your query:")
-
-if query:
-    results = query_engine.query(query)
+question = st.text_input("Question:")
+if question:
+    inputs = tokenizer(question, return_tensors='pt', max_length=512, truncation=True)
+    outputs = model(**inputs)
+    answer = outputs.logits.argmax(-1)
+    documents = query_engine.retrieve(answer)
     st.write("Relevant documents:")
-    for result in results:
-        st.write(f"Document {result.doc_id}: {documents_text[result.doc_id]}")
-
-    insights = llm.generate_insights(query, results)
-    st.write("Insights:")
-    for insight in insights:
-        st.write(insight)
+    for document in documents:
+        st.write(document)
