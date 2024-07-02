@@ -5,8 +5,7 @@ import faiss
 import langchain
 import streamlit as st
 
-# Parse documents
-pdfs = ['data/alphabet_inc_form_10k.pdf', 'data/tesla_inc_form_10k.pdf', 'data/uber_technologies_inc_form_10k.pdf']
+pdfs = ['data/Alphabet_10K.pdf', 'data/Tesla, Inc. Form 10-k.pdf', 'data/Uber Technologies, Inc. Form 10-k.pdf']
 documents = []
 for pdf in pdfs:
     with open(pdf, 'rb') as f:
@@ -18,7 +17,6 @@ for pdf in pdfs:
             text += page_obj.extractText()
         documents.append(text)
 
-# Generate vectors
 tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
 model = DistilBertModel.from_pretrained('distilbert-base-uncased')
 
@@ -29,18 +27,14 @@ for document in documents:
     vector = outputs.last_hidden_state[:, 0, :]
     vectors.append(vector.detach().numpy())
 
-# Store in vector store
 index = faiss.IndexFlatL2(768)
 index.add(vectors)
 
-# Configure query engine
 query_engine = langchain.QueryEngine(index)
 
-# Integrate LLM
 tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
 model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased')
 
-# Develop chatbot interface
 def chatbot_interface(query_engine, tokenizer, model):
     st.title("Content Engine Chatbot")
     st.write("Ask me a question about the documents!")
