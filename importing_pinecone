@@ -1,5 +1,4 @@
-import pinecone
+from pinecone import Pinecone
 
-pinecone.init(
-    api_key="d92d8bfa-3241-4013-903b-7038cdd71314",
-    environment="https://contentengine-8pcul2p.svc.aped-4627-b74a.pinecone.io")
+pc = Pinecone(api_key="d92d8bfa-3241-4013-903b-7038cdd71314")
+index = pc.Index("quickstart")
