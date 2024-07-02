@@ -5,7 +5,7 @@ import faiss
 import langchain
 import streamlit as st
 
-pdfs = ['data/Alphabet_10K.pdf', 'data/Tesla, Inc. Form 10-k.pdf', 'data/Uber Technologies, Inc. Form 10-k.pdf']
+pdfs = ['pdfs+/Alphabet_10K.pdf', 'pdfs+/Tesla, Inc. Form 10-k.pdf', 'pdfs+/Uber Technologies, Inc. Form 10-k.pdf']
 documents = []
 for pdf in pdfs:
     with open(pdf, 'rb') as f:
