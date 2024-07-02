@@ -5,12 +5,12 @@ from langchain.llm import LLM
 from llama_index import LlamaIndex
 from pinecone import Pinecone
 
-pdf_paths = ["Alphabet_10K.pdf", "Tesla_10K.pdf", "Uber_10K.pdf"]
+pdf_paths = ["Alphabet_10K.pdf", "Tesla, Inc. Form 10-K.pdf", "Uber Technologies, Inc. Form 10-K.pdf"]
 
 def extract_text_from_pdfs(pdf_paths):
     texts = []
     for path in pdf_paths:
-        doc = fitz.open(path)
+        doc = PyPDF2.open(path)
         text = ""
         for page in doc:
             text += page.get_text()
