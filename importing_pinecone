@@ -1,4 +1,0 @@
-from pinecone import Pinecone
-
-pc = Pinecone(api_key="d92d8bfa-3241-4013-903b-7038cdd71314")
-index = pc.Index("quickstart")
