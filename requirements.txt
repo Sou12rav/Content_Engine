@@ -1,0 +1,7 @@
+streamlit==1.10.0
+llama-index==0.2.0
+chromadb==0.3.0
+transformers==4.12.0
+bert-base-uncased==4.12.0
+pdfminer.six==20201018
+pdfquery==0.2.3
