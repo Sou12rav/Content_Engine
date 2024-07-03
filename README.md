@@ -1,21 +1,29 @@
-Content Engine Project 
-Overview
-This repo holds the code for the Content Engine project. We built a chatbot that grabs and compares info from multiple PDFs. Our bot uses NLP and info retrieval tricks to give good answers to what users ask. Architecture Our system has these parts:
-Document Parser: This bit takes PDFs and pulls out the words.
-Vector Generator: This part uses DistilBERT (a pre-trained language model) to turn text into number vectors. 
-Vector Store: This bit keeps the document vectors in a Faiss index. Faiss makes finding similar stuff quick. 
-Query Engine: This part uses the Faiss index to find docs that match what the user wants. 
+# Content Engine
 
-working:
-The user inputs a query into the chatbot interface.
-The query is tokenized and fed into the DistilBERT model, which generates a vector representation of the query.
-The vector representation of the query is used to search the Faiss index, which returns a list of documents that are similar to the query.
-The chatbot interface displays the relevant documents to the user.
-Components
+This repository contains a Content Engine project that analyzes and compares multiple PDF documents, specifically identifying and highlighting their differences. The system utilizes Retrieval Augmented Generation (RAG) techniques to effectively retrieve, assess, and generate insights from the documents.
 
-The repository contains the following components:
-content_engine.py: A Python script containing the code for parsing documents, generating vectors, storing in vector store, configuring query engine, integrating LLM, and developing chatbot interface.
-langchain_config.json: A configuration file for LangChain, which is used to configure the Faiss index.
-faiss_index.py: A Python script for creating and managing the Faiss index.
-distilbert_model.py: A Python script for loading and using the DistilBERT model.
-streamlit_app.py: A Python script for developing the chatbot interface using Streamlit.
+## Overview
+
+The Content Engine consists of the following components:
+
+* **Backend**: Built using LlamaIndex, ChromaDB, and a local language model (BERT) to process and analyze the PDF documents.
+* **Frontend**: A Streamlit app that provides a user interface for interacting with the system and displaying comparative insights.
+
+## Usage
+
+1. Clone this repository to your local machine.
+2. Install the required dependencies listed in `requirements.txt`.
+3. Run the Streamlit app using `streamlit run app.py`.
+4. Upload the PDF documents to the `documents/` directory.
+5. Interact with the system by entering queries in the Streamlit app.
+
+## Notebooks
+
+The following notebooks are available in this repository:
+
+* `document_processing.ipynb`: Notebook for document processing and vector generation.
+* `vector_store_ingestion.ipynb`: Notebook for ingesting vectors into ChromaDB.
+* `query_engine_development.ipynb`: Notebook for developing the query engine using LlamaIndex.
+* `streamlit_code.ipynb`: Notebook for building the Streamlit app.
+
+.
