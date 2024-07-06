@@ -4,9 +4,9 @@ from llama_index import LlamaIndex, VectorStore
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 pdf_docs = [
-    "pdfs+/Alphabet_10K.pdf",
-    "pdfs+/Tesla, Inc. Form 10-K.pdf",
-    "pdfs+/Uber Technologies, Inc. Form 10-K.pdf"
+    "Documents/goog-10-k-2023.pdf",
+    "Documents/tsla-20231231-gen.pdf",
+    "Documents/uber-10-k-2023.pdf"
 ]
 
 def parse_documents(pdf_docs):
